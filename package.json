@@ -1,0 +1,60 @@
+{
+	"name": "@batterii/tokengrip",
+	"version": "0.0.0",
+	"description": "Creates and verifies signed tokens using rotated credentials",
+	"author": "Batterii, LLC",
+	"license": "UNLICENSED",
+	"repository": "github:Batterii/tokengrip",
+	"files": [
+		"dist/lib",
+		"dist/types"
+	],
+	"scripts": {
+		"generate": "yo --local-only",
+		"generate:class": "yo @batterii/ts-class  --local-only ",
+		"generate:module": "yo @batterii/ts-module --local-only ",
+		"generate:test": "yo @batterii/ts-test --local-only ",
+		"lint": "eslint . --ext .ts",
+		"lintf": "eslint . --ext .ts --fix",
+		"prebuild": "rm -rf dist",
+		"build": "tsc && tsc --project tsconfig-types.json",
+		"test": "mocha",
+		"test:unit": "mocha test/unit",
+		"test:integration": "mocha test/integration",
+		"test:build": "npm run build && mocha --config .mocharc-dist.yaml dist/test",
+		"preversion": "npm run lint && npm run test:build",
+		"prepublishOnly": "git push && git push --tags"
+	},
+	"main": "dist/lib/index.js",
+	"types": "dist/types/index.d.ts",
+	"devDependencies": {
+		"@batterii/eslint-config-ts": "^2.1.0",
+		"@batterii/generator-ts-class": "^0.2.0",
+		"@batterii/generator-ts-module": "^0.2.0",
+		"@batterii/generator-ts-test": "^0.1.0",
+		"@types/chai": "^4.2.4",
+		"@types/lodash": "^4.14.146",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^10.17.5",
+		"@types/sinon": "^7.5.0",
+		"@types/sinon-chai": "^3.2.3",
+		"@typescript-eslint/eslint-plugin": "^2.6.1",
+		"@typescript-eslint/parser": "^2.6.1",
+		"chai": "^4.2.0",
+		"eslint": "^6.6.0",
+		"mocha": "^6.2.2",
+		"sinon": "^7.5.0",
+		"sinon-chai": "^3.3.0",
+		"source-map-support": "^0.5.16",
+		"ts-node": "^8.4.1",
+		"typescript": "3.5.3",
+		"yo": "^3.1.0"
+	},
+	"dependencies": {
+		"@types/tsscmp": "^1.0.0",
+		"base64url": "^3.0.1",
+		"lodash": "^4.17.15",
+		"nani": "^2.4.0",
+		"tsscmp": "^1.0.6"
+	}
+}
