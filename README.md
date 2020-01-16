@@ -131,7 +131,7 @@ try {
 	// Get the token from the request and verify it.
 	({ payload, newToken } = grip.verify(token));
 } catch (err) {
-	if (is(InvalidTokenError, err)) {
+	if (is(err, InvalidTokenError)) {
 		// Should cause a 401 or whatever is appropriate for your API.
 		throw MyCustomError();
 	} else {

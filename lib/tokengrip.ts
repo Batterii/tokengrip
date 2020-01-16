@@ -1,9 +1,10 @@
 import { castArray, isEmpty, isString } from 'lodash';
-import { decodeObject, encodeObject } from './encoding-utils';
 import { Checkable } from './checkable';
 import { InvalidStateError } from './invalid-state-error';
 import { InvalidTokenError } from './invalid-token-error';
 import { createToken } from './create-token';
+import { decodeObject } from './decode-object';
+import { encodeObject } from '@batterii/encode-object';
 
 /**
  * Interface for results of Tokengrip#verify calls.

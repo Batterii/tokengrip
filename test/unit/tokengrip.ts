@@ -1,6 +1,7 @@
 import * as checkableModule from '../../lib/checkable';
 import * as createTokenModule from '../../lib/create-token';
-import * as encodingUtils from '../../lib/encoding-utils';
+import * as decodeObjectModule from '../../lib/decode-object';
+import * as encodeObjectModule from '@batterii/encode-object';
 import { Tokengrip, VerifyResult } from '../../lib/tokengrip';
 import { InvalidStateError } from '../../lib/invalid-state-error';
 import { InvalidTokenError } from '../../lib/invalid-token-error';
@@ -70,7 +71,7 @@ describe('Tokengrip', function() {
 			payload = { foo: 'bar' };
 
 			validate = sinon.stub(grip as any, '_validate');
-			encodeObject = sinon.stub(encodingUtils, 'encodeObject')
+			encodeObject = sinon.stub(encodeObjectModule, 'encodeObject')
 				.returns(encoded);
 			createToken = sinon.stub(grip as any, '_createToken')
 				.returns(token);
@@ -256,7 +257,7 @@ describe('Tokengrip', function() {
 
 		beforeEach(function() {
 			grip = new Tokengrip([ 'foo', 'bar' ], [ 'baz', 'qux' ]);
-			encodeObject = sinon.stub(encodingUtils, 'encodeObject')
+			encodeObject = sinon.stub(encodeObjectModule, 'encodeObject')
 				.returns(header);
 			createToken = sinon.stub(createTokenModule, 'createToken')
 				.returns(token);
@@ -293,7 +294,7 @@ describe('Tokengrip', function() {
 		beforeEach(function() {
 			grip = new Tokengrip([], [ 'foo', 'bar' ]);
 			decodedHeader = { typ: 'Tokengrip', alg: 'foo' };
-			decodeObject = sinon.stub(encodingUtils, 'decodeObject')
+			decodeObject = sinon.stub(decodeObjectModule, 'decodeObject')
 				.returns(decodedHeader);
 		});
 
@@ -355,7 +356,7 @@ describe('Tokengrip', function() {
 			grip = new Tokengrip();
 
 			decodedPayload = { foo: 'bar' };
-			decodeObject = sinon.stub(encodingUtils, 'decodeObject')
+			decodeObject = sinon.stub(decodeObjectModule, 'decodeObject')
 				.returns(decodedPayload);
 
 			createToken = sinon.stub(grip as any, '_createToken')
