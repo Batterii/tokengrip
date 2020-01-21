@@ -3,6 +3,7 @@ import * as createTokenModule from '../../lib/create-token';
 import * as decodeObjectModule from '../../lib/decode-object';
 import * as encodeObjectModule from '@batterii/encode-object';
 import { Tokengrip, VerifyResult } from '../../lib/tokengrip';
+import { InvalidSignatureError } from '../../lib/invalid-signature-error';
 import { InvalidStateError } from '../../lib/invalid-state-error';
 import { InvalidTokenError } from '../../lib/invalid-token-error';
 import { expect } from 'chai';
@@ -202,8 +203,8 @@ describe('Tokengrip', function() {
 
 			expect(() => {
 				grip.verify(token);
-			}).to.throw(InvalidTokenError).that.includes({
-				message: 'Invalid signature',
+			}).to.throw(InvalidSignatureError).that.includes({
+				usedDefaultMessage: true,
 				cause: null,
 				info: null,
 			});

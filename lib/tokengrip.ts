@@ -1,5 +1,6 @@
 import { castArray, isEmpty, isString } from 'lodash';
 import { Checkable } from './checkable';
+import { InvalidSignatureError } from './invalid-signature-error';
 import { InvalidStateError } from './invalid-state-error';
 import { InvalidTokenError } from './invalid-token-error';
 import { createToken } from './create-token';
@@ -116,7 +117,7 @@ export class Tokengrip {
 			}
 			expired = true;
 		}
-		throw new InvalidTokenError('Invalid signature');
+		throw new InvalidSignatureError();
 	}
 
 	/**
