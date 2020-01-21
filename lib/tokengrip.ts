@@ -5,6 +5,7 @@ import { InvalidStateError } from './invalid-state-error';
 import { InvalidTokenError } from './invalid-token-error';
 import { createToken } from './create-token';
 import { decodeObject } from './decode-object';
+import { decodePayload } from './decode-payload';
 import { encodeObject } from '@batterii/encode-object';
 
 /**
@@ -88,12 +89,6 @@ export class Tokengrip {
 	 * replacement token if one is necessary.
 	 *
 	 * @remarks
-	 * This method will throw an InvalidStateError if there is not at least one
-	 * key and at least one algorithm stored in the instance. It will also throw
-	 * an InvalidTokenError if verification fails completely, either due to an
-	 * invalid signature, invalid JSON in the payload, or an invalid token
-	 * header.
-	 *
 	 * A replacement token will be included in the result as the `newToken`
 	 * property if and only if the provided token is outdated due to a change
 	 * in the 'keys' and/or 'algorithms' properties. Switching from the provided
@@ -101,10 +96,46 @@ export class Tokengrip {
 	 * have a valid token, as long as they haven't been inactive for an entire
 	 * key or algorithm lifecyle.
 	 *
+	 * This method may throw any of the following errors:
+	 * - InvalidStateError: If the is not at least one key and at least one
+	 *   algorithm stored in the Tokengrip instance.
+	 * - InvalidSignatureError: If the signature of the token does not match
+	 *   using one of the instance's keys.
+	 * - InvalidTokenError: If the token's header is not a valid Tokengrip
+	 *   header with an algorithm supported by the instance, or if the payload
+	 *   contains invalid JSON.
+	 *
 	 * @param token - The token to verify.
-	 * @returns - A plain object implementing VerifyResult.
+	 * @returns A plain object implementing VerifyResult.
 	 */
 	verify(token: string): VerifyResult {
+		const newToken = this.checkSignature(token);
+		const result = { payload: decodePayload(token) } as VerifyResult;
+		if (newToken) result.newToken = newToken;
+		return result;
+	}
+
+	/**
+	 * Checks the signature of the token without decoding the payload. Returns
+	 * a replacement token if one is necessary.
+	 *
+	 * @remarks
+	 * This method is the same as #verify, except that it doesn't bother
+	 * decoding and returning the payload. It is useful for situations where
+	 * you either don't care about the payload, or have already decoded it
+	 * yourself using the 'decodePayload` function.
+	 *
+	 * This method may throw any of the following errors:
+	 * - InvalidStateError: If the is not at least one key and at least one
+	 *   algorithm stored in the Tokengrip instance.
+	 * - InvalidSignatureError: If the signature of the token does not match
+	 *   using one of the instance's keys.
+	 * - InvalidTokenError: If the token's header is not a valid Tokengrip
+	 *   header with an algorithm supported by the instance.
+	 * @param token - The token to check.
+	 * @returns A new token, if one is required. `null` otherwise.
+	 */
+	checkSignature(token: string): string|null {
 		const [ header, payload, signature ] = token.split('.');
 		this._validate();
 		const algorithm = this._getAlgorithm(header);
@@ -113,7 +144,7 @@ export class Tokengrip {
 		let expired = algorithm !== this.algorithms[0];
 		for (const key of this.keys) {
 			if (checkable.check(key)) {
-				return this._getVerifyResult(payload, expired);
+				return expired ? this._createToken(payload) : null;
 			}
 			expired = true;
 		}
@@ -162,21 +193,5 @@ export class Tokengrip {
 			);
 		}
 		return algorithm;
-	}
-
-	/**
-	 * Gets the result object for a successful verification.
-	 * @param payload - The encoded payload.
-	 * @param expired - If `true`, a replacement token will be created and
-	 *    included in the result.
-	 * @returns A plain object implementing VerifyResult.
-	 */
-	private _getVerifyResult(
-		payload: string,
-		expired: boolean,
-	): VerifyResult {
-		const result: VerifyResult = { payload: decodeObject(payload) };
-		if (expired) result.newToken = this._createToken(payload);
-		return result;
 	}
 }

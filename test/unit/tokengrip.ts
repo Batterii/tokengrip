@@ -1,11 +1,12 @@
 import * as checkableModule from '../../lib/checkable';
 import * as createTokenModule from '../../lib/create-token';
 import * as decodeObjectModule from '../../lib/decode-object';
+import * as decodePayloadModule from '../../lib/decode-payload';
 import * as encodeObjectModule from '@batterii/encode-object';
-import { Tokengrip, VerifyResult } from '../../lib/tokengrip';
 import { InvalidSignatureError } from '../../lib/invalid-signature-error';
 import { InvalidStateError } from '../../lib/invalid-state-error';
 import { InvalidTokenError } from '../../lib/invalid-token-error';
+import { Tokengrip } from '../../lib/tokengrip';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -102,17 +103,69 @@ describe('Tokengrip', function() {
 	});
 
 	describe('#verify', function() {
+		const token = 'some token';
+		let grip: Tokengrip;
+		let checkSignature: sinon.SinonStub;
+		let payload: any;
+		let decodePayload: sinon.SinonStub;
+
+		beforeEach(function() {
+			grip = new Tokengrip();
+			checkSignature = sinon.stub(grip, 'checkSignature').returns(null);
+			payload = {};
+			decodePayload = sinon.stub(decodePayloadModule, 'decodePayload')
+				.returns(payload);
+		});
+
+		it('checks the signature of the provided token', function() {
+			grip.verify(token);
+
+			expect(checkSignature).to.be.calledOnce;
+			expect(checkSignature).to.be.calledOn(grip);
+			expect(checkSignature).to.be.calledWith(token);
+		});
+
+		it('decodes the payload after checking the signature', function() {
+			grip.verify(token);
+
+			expect(decodePayload).to.be.calledOnce;
+			expect(decodePayload).to.be.calledWith(token);
+			expect(decodePayload).to.be.calledAfter(checkSignature);
+		});
+
+		it('returns the decoded payload in an object', function() {
+			const result = grip.verify(token);
+
+			expect(result).to.be.an.instanceOf(Object);
+			expect(result).to.have.keys([ 'payload' ]);
+			expect(result.payload).to.equal(payload);
+		});
+
+		it('includes the new token from the signature check, if there is one', function() {
+			const newToken = 'new token';
+			checkSignature.returns(newToken);
+
+			const result = grip.verify(token);
+
+			expect(result).to.be.an.instanceOf(Object);
+			expect(result).to.have.keys([ 'payload', 'newToken' ]);
+			expect(result.payload).to.equal(payload);
+			expect(result.newToken).to.equal(newToken);
+		});
+	});
+
+	describe('checkSignature', function() {
 		const header = 'encoded header';
 		const payload = 'encoded payload';
 		const signature = 'signature';
+		const newToken = 'new token';
 		const token = `${header}.${payload}.${signature}`;
 		let grip: Tokengrip;
 		let validate: sinon.SinonStub;
 		let getAlgorithm: sinon.SinonStub;
 		let checkable: sinon.SinonStubbedInstance<Checkable>;
 		let Checkable: sinon.SinonStub;
-		let verifyResult: VerifyResult;
-		let getVerifyResult: sinon.SinonStub;
+		let createToken: sinon.SinonStub;
 
 		beforeEach(function() {
 			grip = new Tokengrip([ 'foo', 'bar' ], [ 'baz', 'qux' ]);
@@ -125,20 +178,19 @@ describe('Tokengrip', function() {
 			Checkable = sinon.stub(checkableModule, 'Checkable')
 				.returns(checkable);
 
-			verifyResult = {} as VerifyResult;
-			getVerifyResult = sinon.stub(grip as any, '_getVerifyResult')
-				.returns(verifyResult);
+			createToken = sinon.stub(grip as any, '_createToken')
+				.returns(newToken);
 		});
 
 		it('validates the instance', function() {
-			grip.verify(token);
+			grip.checkSignature(token);
 
 			expect(validate).to.be.calledOnce;
 			expect(validate).to.be.calledOn(grip);
 		});
 
 		it('gets the algorithm from the header after validating', function() {
-			grip.verify(token);
+			grip.checkSignature(token);
 
 			expect(getAlgorithm).to.be.calledOnce;
 			expect(getAlgorithm).to.be.calledWith(header);
@@ -148,7 +200,7 @@ describe('Tokengrip', function() {
 		it('creates a checkable with the signature, algorithm, and full data string', function() {
 			const data = `${header}.${payload}`;
 
-			grip.verify(token);
+			grip.checkSignature(token);
 
 			expect(Checkable).to.be.calledOnce;
 			expect(Checkable).to.be.calledWithNew;
@@ -156,7 +208,7 @@ describe('Tokengrip', function() {
 		});
 
 		it('checks each key with the checker, in order', function() {
-			grip.verify(token);
+			grip.checkSignature(token);
 
 			expect(checkable.check).to.be.calledTwice;
 			expect(checkable.check).to.always.be.calledOn(checkable);
@@ -166,48 +218,47 @@ describe('Tokengrip', function() {
 			]);
 		});
 
-		it('returns an expired verify result if first key fails', function() {
-			const result = grip.verify(token);
+		it('returns a new token if first key fails, but a later one succeeds', function() {
+			const result = grip.checkSignature(token);
 
-			expect(getVerifyResult).to.be.calledOnce;
-			expect(getVerifyResult).to.be.calledOn(grip);
-			expect(getVerifyResult).to.be.calledWith(payload, true);
-			expect(result).to.equal(verifyResult);
+			expect(createToken).to.be.calledOnce;
+			expect(createToken).to.be.calledOn(grip);
+			expect(createToken).to.be.calledWith(payload);
+			expect(result).to.equal(newToken);
 		});
 
-		it('returns a non-expired verify result if the first key succeeds', function() {
+		it('returns null if the first key succeeds', function() {
 			checkable.check.withArgs('foo').returns(true);
 
-			const result = grip.verify(token);
+			const result = grip.checkSignature(token);
 
-			expect(getVerifyResult).to.be.calledOnce;
-			expect(getVerifyResult).to.be.calledOn(grip);
-			expect(getVerifyResult).to.be.calledWith(payload, false);
-			expect(result).to.equal(verifyResult);
+			expect(createToken).to.not.be.called;
+			expect(result).to.be.null;
 		});
 
-		it('forces an expired verify result if the algorithm is not the first one', function() {
+		it('forces a new token if the algorithm is not the first one', function() {
 			checkable.check.withArgs('foo').returns(true);
 			getAlgorithm.returns('qux');
 
-			const result = grip.verify(token);
+			const result = grip.checkSignature(token);
 
-			expect(getVerifyResult).to.be.calledOnce;
-			expect(getVerifyResult).to.be.calledOn(grip);
-			expect(getVerifyResult).to.be.calledWith(payload, true);
-			expect(result).to.equal(verifyResult);
+			expect(createToken).to.be.calledOnce;
+			expect(createToken).to.be.calledOn(grip);
+			expect(createToken).to.be.calledWith(payload);
+			expect(result).to.equal(newToken);
 		});
 
 		it('throws if none of the keys succeed', function() {
 			checkable.check.withArgs('bar').returns(false);
 
 			expect(() => {
-				grip.verify(token);
+				grip.checkSignature(token);
 			}).to.throw(InvalidSignatureError).that.includes({
 				usedDefaultMessage: true,
 				cause: null,
 				info: null,
 			});
+			expect(createToken).to.not.be.called;
 		});
 	});
 
@@ -342,49 +393,6 @@ describe('Tokengrip', function() {
 				expect(err.info).to.deep.equal({ algorithm: 'baz' });
 				return true;
 			});
-		});
-	});
-
-	describe('#_getVerifyResult', function() {
-		const payload = 'encoded payload';
-		const newToken = 'new token';
-		let grip: Tokengrip;
-		let decodedPayload: any;
-		let decodeObject: sinon.SinonStub;
-		let createToken: sinon.SinonStub;
-
-		beforeEach(function() {
-			grip = new Tokengrip();
-
-			decodedPayload = { foo: 'bar' };
-			decodeObject = sinon.stub(decodeObjectModule, 'decodeObject')
-				.returns(decodedPayload);
-
-			createToken = sinon.stub(grip as any, '_createToken')
-				.returns(newToken);
-		});
-
-		it('returns the decoded payload as a property', function() {
-			const result = (grip as any)._getVerifyResult(payload, false);
-
-			expect(decodeObject).to.be.calledOnce;
-			expect(decodeObject).to.be.calledWith(payload);
-			expect(createToken).to.not.be.called;
-			expect(result).to.have.keys([ 'payload' ]);
-			expect(result.payload).to.equal(decodedPayload);
-		});
-
-		it('also returns a new key, if expired was true', function() {
-			const result = (grip as any)._getVerifyResult(payload, true);
-
-			expect(decodeObject).to.be.calledOnce;
-			expect(decodeObject).to.be.calledWith(payload);
-			expect(createToken).to.be.calledOnce;
-			expect(createToken).to.be.calledOn(grip);
-			expect(createToken).to.be.calledWith(payload);
-			expect(result).to.have.keys([ 'payload', 'newToken' ]);
-			expect(result.payload).to.equal(decodedPayload);
-			expect(result.newToken).to.equal(newToken);
 		});
 	});
 });
