@@ -83,6 +83,25 @@ except re-signed with the newest key and algorithm. This method will throw if
 verfication fails with all keys, or if the token is simply invalid due to an
 unsupported algorithm or invalid JSON.
 
+**payload = decodePayload(token)**
+
+Extracts the decoded payload of a token, without checking the signature. This
+should only be used if it is helpful to know something about the token before
+the signature is checked-- an expiration date, for example, so you know if the
+token is expired before you even bother with verifying it.
+
+Data extracted this way should *not* be trusted until the signature is checked.
+
+**newToken = grip.checkSignature(token)**
+
+This is similar to `grip#verify`, except that it does not decode the payload.
+Like `grip#verify` it returns a new token if one is needed. It will return
+`null` otherwise.
+
+This method is useful for checking a signature after you've already decoded the
+payload using `decodePayload`. `grip#verify` is simply a combination of both of
+these operations, since the majority of the time you'll want to be doing both.
+
 
 ## Error Handling
 Tokengrip uses [Nani][5] to create the errors it throws, allowing you to easily
@@ -97,11 +116,17 @@ identify them using the `is` function. Three error classes are exported:
   part of the developer-- for example, popping out too many keys for failing to
   provide any to begin with.
 
-- `InvalidTokenError`: Will be thrown when a token is provided to `#verify` that
-  is not valid. This can be due to the token having been tampered with, or
-  having been signed by a key or alorithm that is no longer allowed by the
-  Tokengrip instance. If you want to change what happens when clients provide
-  invalid tokens, you should catch this and do something else.
+- `InvalidTokenError`: Will be thrown when a token is provided that is not
+  valid. This can be due to the token having been tampered with, or having been
+  signed by a key or alorithm that is no longer allowed by the Tokengrip
+  instance.
+
+- `InvalidSignatureError`: A subtype of `InvalidTokenError`, indicating
+  specifically that the signature was checked against all of the keys and did
+  not match with any of them. This can happen if the token was tampered with,
+  or if it was originally signed by a key that is no longer in the instance.
+  Unlike a base `InvalidTokenError`, though, you can rule out a disallowed
+  alogrithm, or that a string was provided that simply isn't a Tokengrip token.
 
 
 ## Example
