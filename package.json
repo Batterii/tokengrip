@@ -2,8 +2,15 @@
 	"name": "tokengrip",
 	"version": "0.2.1",
 	"description": "Creates and verifies signed tokens using rotated credentials",
+	"keywords": [
+		"signature",
+		"signed",
+		"token",
+		"keygrip",
+		"rotated"
+	],
 	"author": "Batterii, LLC",
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"repository": "github:Batterii/tokengrip",
 	"files": [
 		"dist/lib",
