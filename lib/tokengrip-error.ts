@@ -1,7 +1,7 @@
 import { BatteriiError } from '@batterii/errors';
 
 /**
- * Base class for all errors defined by @batterii/tokengrip.
+ * Base class for all errors defined by this package.
  *
  * @remarks
  * This class, as well as all other error classes in this project, inherits from

@@ -1,11 +1,11 @@
-# @batterii/tokengrip
+# tokengrip
 Similar to [Keygrip][1], this library helps create and verify digital signatures
 using a rotating credential system. Unlike Keygrip, however, it produces
 self-contained JWT-like tokens which contain the signing algorthm, a
 JSON-encoded payload, and the signature itself.
 
 
-## Tokengrip tokens not JWT's
+## Tokengrip tokens are not JWT's
 Although they are similar to JWT's, the tokens created by Tokengrip are
 deliberately *not* compliant with the [JWT standard][2]. This standard is
 massively complex and intended to handle use cases far beyond what is required
@@ -14,7 +14,7 @@ for simple symmetrically-signed authentication tokens.
 Most notably, Tokengrip does not use the same algorithm specifiers, instead
 using those consumed by Node's [crypto.createHmac][3] function. It also does not
 concern itself with any aysmmetric signing algorithms, built-in expiration
-times, or any of the other 'standard claims' of JWT.
+times, or any of the other "standard claims" of JWT.
 
 
 ## Rationale

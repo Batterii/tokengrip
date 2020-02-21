@@ -1,5 +1,5 @@
 {
-	"name": "@batterii/tokengrip",
+	"name": "tokengrip",
 	"version": "0.2.1",
 	"description": "Creates and verifies signed tokens using rotated credentials",
 	"author": "Batterii, LLC",
