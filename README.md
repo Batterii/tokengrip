@@ -38,10 +38,10 @@ similar to how JWT's do it.
 
 Finally, Cookies has a nice feature which uses Keygrip's `#index` method to
 detect when a signature was created with an outdated key, and automatically
-replace the signature using the newest key every time you fetch a signed cookie.
-Without this feature, valid signatures would eventually become invalid, no
-matter how frequently they are used in requests, which obviously defeats the
-purpose of using Keygrip in the first place.
+replacing the signature with one using the newest key every time you fetch a
+signed cookie. Without this feature, valid signatures would eventually become
+invalid, no matter how frequently they are used in requests, which obviously
+defeats the purpose of using Keygrip in the first place.
 
 Tokengrip aims to reproduce this feature within its own API. Its `#verify`
 method will perform this check and include a replacement token in its return
@@ -113,7 +113,7 @@ identify them using the `is` function. Three error classes are exported:
 - `InvalidStateError`: Will be thrown when an attempt is made to sign or verify
   a token when either the keys or algorithms arrays are empty. If you catch one
   of these, you should probably re-throw it, as it indicates a mistake on the
-  part of the developer-- for example, popping out too many keys for failing to
+  part of the developer-- for example, popping out too many keys,or failing to
   provide any to begin with.
 
 - `InvalidTokenError`: Will be thrown when a token is provided that is not
@@ -142,7 +142,7 @@ const grip = new Tokengrip(
 
 // ...
 
-// In your login endpoint:
+// In your login endpoint. You can put whatever data is needed in the body.
 const token = grip.sign({ foo: 'bar' });
 // Give the token to the client in cookie, header, or response body...
 
