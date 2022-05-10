@@ -17,21 +17,21 @@
 		"npm": ">=5.3"
 	},
 	"files": [
-		"dist/lib",
-		"dist/types"
+		"dist/",
+		"!dist/*.test.js",
+		"!dist/*.test.js.map"
 	],
 	"scripts": {
 		"lint": "eslint . --ext .ts",
 		"lintf": "eslint . --ext .ts --fix",
 		"prebuild": "rm -rf dist",
 		"build": "tsc && tsc --project tsconfig-types.json",
-		"test": "mocha",
-		"test:build": "npm run build && mocha --config .mocharc-dist.yaml dist/test",
+		"test": "mocha src/**/*.test.ts",
+		"test:build": "npm run build && mocha --config .mocharc-dist.yaml dist/**/*.test.js",
 		"preversion": "npm run lint && npm run test:build",
 		"prepublishOnly": "git push && git push --tags"
 	},
-	"main": "dist/lib/index.js",
-	"types": "dist/types/index.d.ts",
+	"main": "dist/index.js",
 	"devDependencies": {
 		"@types/chai": "^4.2.9",
 		"@types/lodash": "^4.14.149",

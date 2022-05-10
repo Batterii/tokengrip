@@ -3,10 +3,13 @@
 	"compilerOptions": {
 		"removeComments": false,
 		"declaration": true,
-		"declarationDir": "dist/types",
+		"declarationDir": "dist",
 		"emitDeclarationOnly": true
 	},
 	"include": [
-		"lib/**/*"
+		"src/**/*",
+	],
+	"exclude": [
+		"src/**/*.test.ts"
 	]
 }

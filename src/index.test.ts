@@ -1,7 +1,7 @@
-import {Tokengrip} from "../../lib";
+import {Tokengrip} from ".";
 import {expect} from "chai";
 
-describe("Tokengrip (Integration)", function() {
+describe("Tokengrip", function() {
 	it("supports rotating keys and algorithms", function() {
 		const grip = new Tokengrip("omg seecrat");
 		const obj = {foo: "bar"};
