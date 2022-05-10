@@ -1,1 +1,1 @@
-extends: '@batterii/eslint-config-ts/test'
+extends: '@batterii/eslint-config-vurvey/test'
