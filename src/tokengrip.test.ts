@@ -1,4 +1,4 @@
-import {Tokengrip} from ".";
+import {Tokengrip} from "./tokengrip";
 import {expect} from "chai";
 
 describe("Tokengrip", function() {

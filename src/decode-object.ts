@@ -1,7 +1,4 @@
-import {
-	InvalidJsonError,
-	decodeObject as original,
-} from "@batterii/encode-object";
+import {InvalidJsonError, decodeObject as original} from "@batterii/encode-object";
 import {InvalidTokenError} from "./invalid-token-error";
 import {is} from "nani";
 

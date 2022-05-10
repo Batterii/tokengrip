@@ -1,5 +1,5 @@
 import {Signable} from "./signable";
-import {compare} from "./compare";
+import tsscmp from "tsscmp";
 
 /**
  * Encapsulates a signature and a signable, allowing for easy signature
@@ -33,6 +33,6 @@ export class Checkable {
 	 * @returns `true` if the signature matches the signable, `false` otherwise.
 	 */
 	check(key: string): boolean {
-		return compare(this.signable.sign(key), this.signature);
+		return tsscmp(this.signable.sign(key), this.signature);
 	}
 }
