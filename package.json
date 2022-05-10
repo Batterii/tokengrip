@@ -21,10 +21,6 @@
 		"dist/types"
 	],
 	"scripts": {
-		"generate": "yo --local-only",
-		"generate:class": "yo @batterii/ts-class  --local-only ",
-		"generate:module": "yo @batterii/ts-module --local-only ",
-		"generate:test": "yo @batterii/ts-test --local-only ",
 		"lint": "eslint . --ext .ts",
 		"lintf": "eslint . --ext .ts --fix",
 		"prebuild": "rm -rf dist",
@@ -37,10 +33,6 @@
 	"main": "dist/lib/index.js",
 	"types": "dist/types/index.d.ts",
 	"devDependencies": {
-		"@batterii/eslint-config-ts": "^2.1.0",
-		"@batterii/generator-ts-class": "^0.2.0",
-		"@batterii/generator-ts-module": "^0.2.0",
-		"@batterii/generator-ts-test": "^0.1.1",
 		"@types/chai": "^4.2.9",
 		"@types/lodash": "^4.14.149",
 		"@types/mocha": "^7.0.1",
@@ -52,8 +44,7 @@
 		"mocha": "^7.0.1",
 		"source-map-support": "^0.5.16",
 		"ts-node": "^8.6.2",
-		"typescript": "3.8.2",
-		"yo": "^3.1.1"
+		"typescript": "3.8.2"
 	},
 	"dependencies": {
 		"@batterii/encode-object": "^2.1.0",
