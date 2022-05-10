@@ -1,9 +1,9 @@
 import {
 	InvalidJsonError,
 	decodeObject as original,
-} from '@batterii/encode-object';
-import { InvalidTokenError } from './invalid-token-error';
-import { is } from 'nani';
+} from "@batterii/encode-object";
+import {InvalidTokenError} from "./invalid-token-error";
+import {is} from "nani";
 
 /**
  * An internal function that simply wraps @batterii/encode-object for error
@@ -16,6 +16,6 @@ export function decodeObject(str: string): any {
 		return original(str);
 	} catch (err) {
 		if (!is(err, InvalidJsonError)) throw err;
-		throw new InvalidTokenError('Invalid JSON in token', err);
+		throw new InvalidTokenError("Invalid JSON in token", err);
 	}
 }

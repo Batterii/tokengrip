@@ -1,5 +1,5 @@
-import base64url from 'base64url';
-import { createHmac } from 'crypto';
+import base64url from "base64url";
+import {createHmac} from "crypto";
 
 /**
  * Encapsulates an algorithm and data string, allowing easy creation of

@@ -1,23 +1,23 @@
-import * as encodeObjectModule from '@batterii/encode-object';
-import * as nani from 'nani';
-import { InvalidTokenError } from '../../lib/invalid-token-error';
-import { decodeObject } from '../../lib/decode-object';
-import { expect } from 'chai';
-import sinon from 'sinon';
+import * as encodeObjectModule from "@batterii/encode-object";
+import * as nani from "nani";
+import {InvalidTokenError} from "../../lib/invalid-token-error";
+import {decodeObject} from "../../lib/decode-object";
+import {expect} from "chai";
+import sinon from "sinon";
 
-describe('decodeObject', function() {
-	const str = 'some string';
+describe("decodeObject", function() {
+	const str = "some string";
 	let obj: any;
 	let original: sinon.SinonStub;
 	let is: sinon.SinonStub;
 
 	beforeEach(function() {
 		obj = {};
-		original = sinon.stub(encodeObjectModule, 'decodeObject').returns(obj);
-		is = sinon.stub(nani, 'is').returns(true);
+		original = sinon.stub(encodeObjectModule, "decodeObject").returns(obj);
+		is = sinon.stub(nani, "is").returns(true);
 	});
 
-	it('wraps the original decodeObject function', function() {
+	it("wraps the original decodeObject function", function() {
 		const result = decodeObject(str);
 
 		expect(original).to.be.calledOnce;
@@ -25,15 +25,15 @@ describe('decodeObject', function() {
 		expect(result).to.equal(obj);
 	});
 
-	context('original function throws', function() {
+	context("original function throws", function() {
 		let error: Error;
 
 		beforeEach(function() {
-			error = new Error('omg bad error');
+			error = new Error("omg bad error");
 			original.throws(error);
 		});
 
-		it('checks if a thrown error is an InvalidJsonError', function() {
+		it("checks if a thrown error is an InvalidJsonError", function() {
 			try {
 				decodeObject(str);
 			} catch (_err) {
@@ -47,17 +47,17 @@ describe('decodeObject', function() {
 			);
 		});
 
-		it('wraps InvalidJsonErrors with InvalidTokenErrors', function() {
+		it("wraps InvalidJsonErrors with InvalidTokenErrors", function() {
 			expect(() => {
 				decodeObject(str);
 			}).to.throw(InvalidTokenError).that.includes({
-				shortMessage: 'Invalid JSON in token',
+				shortMessage: "Invalid JSON in token",
 				cause: error,
 				info: null,
 			});
 		});
 
-		it('rethrows all other errors', function() {
+		it("rethrows all other errors", function() {
 			is.returns(false);
 
 			expect(() => {

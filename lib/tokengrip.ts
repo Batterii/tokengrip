@@ -1,12 +1,12 @@
-import { castArray, isEmpty, isString } from 'lodash';
-import { Checkable } from './checkable';
-import { InvalidSignatureError } from './invalid-signature-error';
-import { InvalidStateError } from './invalid-state-error';
-import { InvalidTokenError } from './invalid-token-error';
-import { createToken } from './create-token';
-import { decodeObject } from './decode-object';
-import { decodePayload } from './decode-payload';
-import { encodeObject } from '@batterii/encode-object';
+import {castArray, isEmpty, isString} from "lodash";
+import {Checkable} from "./checkable";
+import {InvalidSignatureError} from "./invalid-signature-error";
+import {InvalidStateError} from "./invalid-state-error";
+import {InvalidTokenError} from "./invalid-token-error";
+import {createToken} from "./create-token";
+import {decodeObject} from "./decode-object";
+import {decodePayload} from "./decode-payload";
+import {encodeObject} from "@batterii/encode-object";
 
 /**
  * Interface for results of Tokengrip#verify calls.
@@ -63,7 +63,7 @@ export class Tokengrip {
 	 */
 	constructor(
 		keys: string|string[] = [],
-		algorithms: string|string[] = 'sha1',
+		algorithms: string|string[] = "sha1",
 	) {
 		this.keys = castArray(keys);
 		this.algorithms = castArray(algorithms);
@@ -110,7 +110,7 @@ export class Tokengrip {
 	 */
 	verify(token: string): VerifyResult {
 		const newToken = this.checkSignature(token);
-		const result = { payload: decodePayload(token) } as VerifyResult;
+		const result = {payload: decodePayload(token)} as VerifyResult;
 		if (newToken) result.newToken = newToken;
 		return result;
 	}
@@ -136,7 +136,7 @@ export class Tokengrip {
 	 * @returns A new token, if one is required. `null` otherwise.
 	 */
 	checkSignature(token: string): string|null {
-		const [ header, payload, signature ] = token.split('.');
+		const [header, payload, signature] = token.split(".");
 		this._validate();
 		const algorithm = this._getAlgorithm(header);
 		const data = `${header}.${payload}`;
@@ -157,10 +157,10 @@ export class Tokengrip {
 	 */
 	private _validate(): void {
 		if (isEmpty(this.keys)) {
-			throw new InvalidStateError('keys array is empty');
+			throw new InvalidStateError("keys array is empty");
 		}
 		if (isEmpty(this.algorithms)) {
-			throw new InvalidStateError('algorithms array is empty');
+			throw new InvalidStateError("algorithms array is empty");
 		}
 	}
 
@@ -170,8 +170,8 @@ export class Tokengrip {
 	 * @returns The created token.
 	 */
 	private _createToken(payload: string): string {
-		const [ algorithm ] = this.algorithms;
-		const header = encodeObject({ typ: 'Tokengrip', alg: algorithm });
+		const [algorithm] = this.algorithms;
+		const header = encodeObject({typ: "Tokengrip", alg: algorithm});
 		return createToken(algorithm, this.keys[0], `${header}.${payload}`);
 	}
 
@@ -182,14 +182,14 @@ export class Tokengrip {
 	 * @returns The header's `alg` field.
 	 */
 	private _getAlgorithm(header: string): string {
-		const { alg: algorithm, typ: type } = decodeObject(header);
-		if (type !== 'Tokengrip') {
-			throw new InvalidTokenError('Token is not a Tokengrip token');
+		const {alg: algorithm, typ: type} = decodeObject(header);
+		if (type !== "Tokengrip") {
+			throw new InvalidTokenError("Token is not a Tokengrip token");
 		}
 		if (!isString(algorithm) || !this.algorithms.includes(algorithm)) {
 			throw new InvalidTokenError(
 				`Algorithm '${algorithm}' is not allowed`,
-				{ info: { algorithm } },
+				{info: {algorithm}},
 			);
 		}
 		return algorithm;

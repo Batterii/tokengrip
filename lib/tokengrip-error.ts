@@ -1,4 +1,4 @@
-import { BatteriiError } from '@batterii/errors';
+import {BatteriiError} from "@batterii/errors";
 
 /**
  * Base class for all errors defined by this package.

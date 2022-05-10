@@ -1,4 +1,4 @@
-import { Signable } from './signable';
+import {Signable} from "./signable";
 
 /**
  * Creates a token with the provided data string.

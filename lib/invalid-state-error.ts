@@ -1,4 +1,4 @@
-import { TokengripError } from './tokengrip-error';
+import {TokengripError} from "./tokengrip-error";
 
 /**
  * Error class for invalid Tokengrip state. These are thrown whenever an

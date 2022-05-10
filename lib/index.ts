@@ -1,11 +1,11 @@
 // Tokengrip class and interfaces.
-export { Tokengrip, VerifyResult } from './tokengrip';
+export {Tokengrip, VerifyResult} from "./tokengrip";
 
 // Utility functions.
-export { decodePayload } from './decode-payload';
+export {decodePayload} from "./decode-payload";
 
 // Error classes.
-export { InvalidSignatureError } from './invalid-signature-error';
-export { InvalidStateError } from './invalid-state-error';
-export { InvalidTokenError } from './invalid-token-error';
-export { TokengripError } from './tokengrip-error';
+export {InvalidSignatureError} from "./invalid-signature-error";
+export {InvalidStateError} from "./invalid-state-error";
+export {InvalidTokenError} from "./invalid-token-error";
+export {TokengripError} from "./tokengrip-error";

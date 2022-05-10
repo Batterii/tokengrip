@@ -1,4 +1,4 @@
-import { decodeObject } from './decode-object';
+import {decodeObject} from "./decode-object";
 
 /**
  * Decodes and returns a token's payload, without checking the signature.
@@ -19,5 +19,5 @@ import { decodeObject } from './decode-object';
  * @returns The decoded payload.
  */
 export function decodePayload(token: string): any {
-	return decodeObject(token.split('.')[1]);
+	return decodeObject(token.split(".")[1]);
 }

@@ -1,5 +1,5 @@
-import { Signable } from './signable';
-import { compare } from './compare';
+import {Signable} from "./signable";
+import {compare} from "./compare";
 
 /**
  * Encapsulates a signature and a signable, allowing for easy signature
