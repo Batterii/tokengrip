@@ -1,4 +1,2 @@
-extension: ts
-recursive: true
 require:
-  - ts-node/register
+  - source-map-support/register
