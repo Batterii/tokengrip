@@ -3,6 +3,7 @@ export {Tokengrip, VerifyResult} from "./tokengrip";
 
 // Utility functions.
 export {decodePayload} from "./decode-payload";
+export {isToken} from "./is-token";
 
 // Error classes.
 export {InvalidSignatureError} from "./invalid-signature-error";
